@@ -1,0 +1,18 @@
+L515:
+  xp_off: 0.026 # smaller -> wider
+  xn_off: 0.052 # larger -> wider
+  yp_off: 0.052 # larger -> wider
+  yn_off: 0.008 # smaller -> wider
+
+D400:
+  xp_off: 0.028 # smaller -> wider
+  xn_off: 0.026 # larger -> wider
+  yp_off: 0.028 # larger -> wider
+  yn_off: 0.024 # smaller -> wider
+
+N432:
+  Intel_RealSense_D435_831612071764:
+    Length: 0.23665779573946072
+    Marker_ids: {Length: 102, Reference: 101, Width: 100, type: 6x6}
+    Marker_size: 0.068
+    Width: 0.26771377872529656
