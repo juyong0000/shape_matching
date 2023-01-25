@@ -87,9 +87,7 @@ class IntelCamera:
 
     def generate(self, depth, vox_size, downsample=True):
         
-        depth_o3d = o3d.geometry.Image(
-            
-        )
+        depth_o3d = o3d.geometry.Image(depth)
         
         if self.device_product_line == 'L500':
             self.pcd = o3d.geometry.PointCloud.create_from_depth_image(depth_o3d, self.intrinsic_o3d, depth_scale=4000.0)
@@ -215,7 +213,7 @@ class IntelCamera:
                     
     def crop_points(self):
 
-        self.define_workspace(cfg_path = '/home/juyong/catkin_ws/src/bin_cylinder_localization/camera/workspace.yaml')
+        self.define_workspace(cfg_path = '/home/jy/test_uoais/shape_matching/camera/workspace.yaml')
 
         R = self.stored_cam2marker[:3, :3]
         self.tvecs = self.stored_cam2marker[:3, 3]
@@ -226,15 +224,24 @@ class IntelCamera:
         H_inv = np.concatenate((H_inv, np.array([[0, 0, 0, 1]])), axis = 0)
         self.pcd.transform(H_inv)
         self.xyz = np.asarray(self.pcd.points)
-        valid_idx = np.where(((self.xyz[:, 0] > -0.03) & (self.xyz[:, 0] < (self.W - 0.03))) & ((self.xyz[:, 1] > -0.02) & (self.xyz[:, 1] < (self.H-0.02))) & (self.xyz[:, 2] > self.z_min) & (self.xyz[:, 2] < 0.3))[0]
+        valid_idx = np.where(((self.xyz[:, 0] > -0.03) & (self.xyz[:, 0] < (self.W - 0.03)))
+                            & ((self.xyz[:, 1] > -0.02) & (self.xyz[:, 1] < (self.H-0.02))) 
+                            & ((self.xyz[:, 2] > -0.1) & (self.xyz[:, 2] < 0.2)))[0]
 
+        print(np.shape(self.xyz))
+        # valid_idx = np.where(((self.xyz[:, 0] > 0) & (self.xyz[:, 0] < (self.W)))
+        #                     & ((self.xyz[:, 1] > 0) & (self.xyz[:, 1] < (self.H))) 
+        #                     )[0]
+
+        # valid_idx = np.where(((self.xyz[:, 2] > self.z_min) & (self.xyz[:, 2] < 0.3)))[0]
         # self.pcd = self.select_by_index(self.pcd, valid_idx)
         self.pcd = self.pcd.select_by_index(valid_idx)
-        
+
         ## transform point cloud to original frame (camera frame)
         self.pcd.transform(self.stored_cam2marker)
         self.xyz = np.asarray(self.pcd.points)
         return self.pcd
+
 
     @staticmethod
     def select_by_index(pcd, index=[]): 
